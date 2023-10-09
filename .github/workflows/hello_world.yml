@@ -44,7 +44,7 @@ jobs:
       with:
         files: |
           hello.py
-        tag_name: v1.0  # Replace with your desired tag name
+        tag_name: v1.1  # Replace with your desired tag name
         draft: false
         prerelease: false
       env:
