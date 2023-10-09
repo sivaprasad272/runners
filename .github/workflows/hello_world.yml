@@ -44,22 +44,8 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-          files: |
-                hello.py
-      tag_name: v1.0  # Replace with your desired tag name
-      draft: false
-      prerelease: false
-      commitish: master  # Replace with your desired branch
-  env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      retries: 3
-      retry-delay: 30000 # Delay in milliseconds (30 seconds)
-
-    - name: Create GitHub Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: hello.py
+        files: |
+          hello.py
         tag_name: v1.0  # Replace with your desired tag name
         draft: false
         prerelease: false
@@ -68,4 +54,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Get Release URL
-      run: echo "steps.create_release.outputs.tag_name"
+      run: echo "Release URL:https://github.com/${{github.repository}}/releases/tag/${{steps.create_release.outputs.tag_name}}"
