@@ -52,6 +52,8 @@ jobs:
         commitish: master  # Replace with your desired branch
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        retries: 3
+        retry-delay: 30000 # Delay in milliseconds (30 seconds)
 
     - name: Get Release URL
       run: echo "Release URL:https://github.com/${{github.repository}}/releases/tag/${{steps.create_release.outputs.tag_name}}"
