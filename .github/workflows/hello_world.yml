@@ -32,7 +32,6 @@ jobs:
       run: python hello.py
       working-directory: ${{ github.workspace }}
 
-  release:
    release:
     needs: build
     runs-on: self-hosted
