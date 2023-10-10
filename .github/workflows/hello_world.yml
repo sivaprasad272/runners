@@ -47,8 +47,6 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          files: |
-            hello.py
           tag_name: v1.1-${{ env.BUILD_NUMBER }}
           draft: false
           prerelease: false
