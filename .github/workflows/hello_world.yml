@@ -40,19 +40,38 @@ jobs:
         id: get_build_number
         run: echo "BUILD_NUMBER=$(echo $GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
 
+      - name: Calculate Release Version
+        id: calculate_version
+        run: |
+          MAJOR_VERSION=1
+          MINOR_VERSION=$((MAJOR_VERSION + $BUILD_NUMBER))
+          RELEASE_VERSION="v${MAJOR_VERSION}.${MINOR_VERSION}"
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
+
+      - name: Create Lightweight Tag
+        run: git tag -a -m "Release ${{ env.RELEASE_VERSION }}" ${{ env.RELEASE_VERSION }}
+        shell: bash
+
+      - name: Push Lightweight Tag
+        run: git push origin ${{ env.RELEASE_VERSION }}
+        shell: bash
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
           files: |
             hello.py
-          tag_name: v1.${{ env.BUILD_NUMBER }}
+          tag_name: ${{ env.RELEASE_VERSION }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           retries: 3
           retry-delay: 30000
+
+      - name: Get Release URL
+        run: echo "Release URL:https://github.com/${{github.repository}}/releases/tag/${{env.RELEASE_VERSION}}"
 
       - name: Get Release URL
         run: echo "Release URL:https://github.com/${{github.repository}}/releases/tag/${{steps.create_release.outputs.tag_name}}"
