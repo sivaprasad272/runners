@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Set Build Number
         id: set_build_number
-        run: echo "BUILD_NUMBER=${{ github.run_id % 1000 }}" >> $GITHUB_ENV
+        run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         id: create_release
@@ -52,8 +52,6 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          retries: 3
-          retry-delay: 30000 # Delay in milliseconds (30 seconds)
 
       - name: Get Release URL
         run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/v1.1.${{ env.BUILD_NUMBER }}"
