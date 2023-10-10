@@ -19,7 +19,7 @@ jobs:
           # Install Python
           Start-Process -Wait -FilePath python-installer.exe -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_launcher=0"
         shell: powershell
-
+      
       - name: Install Python Dependencies
         run: |
           # Install Python dependencies from requirements.txt (if it exists)
@@ -29,7 +29,7 @@ jobs:
             echo "requirements.txt not found."
           }
         shell: powershell
-
+      
       - name: Run Hello World
         run: python hello.py
         working-directory: ${{ github.workspace }}
@@ -37,39 +37,25 @@ jobs:
   release:
     needs: build
     runs-on: self-hosted
+
     steps:
-      - name: Get Build Number
-        id: get_build_number
-        run: echo "BUILD_NUMBER=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
-
-      - name: Calculate Release Version
-        id: calculate_version
-        run: |
-          MAJOR_VERSION=1
-          MINOR_VERSION=$((MAJOR_VERSION + BUILD_NUMBER))
-          RELEASE_VERSION="v${MAJOR_VERSION}.${MINOR_VERSION}"
-          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
-
-
-      - name: Create Lightweight Tag
-        run: git tag -a -m "Release ${RELEASE_VERSION}" "${RELEASE_VERSION}"
-
-      - name: Push Lightweight Tag
-        run: git push origin "${RELEASE_VERSION}"
+      - name: Set Build Number
+        id: set_build_number
+        run: echo "BUILD_NUMBER=$((${{ github.run_id }} % 1000))" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          files: hello.py
-          tag_name: ${{ env.RELEASE_VERSION }}
+          files: |
+            hello.py
+          tag_name: v1.1-${{ env.BUILD_NUMBER }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           retries: 3
-          retry-delay: 30000
+          retry-delay: 30000 # Delay in milliseconds (30 seconds)
 
       - name: Get Release URL
-        run: |
-          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_VERSION }}"
+        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}"
