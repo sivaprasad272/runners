@@ -43,7 +43,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: "v1.$RUN_NUMBER"
+          tag_name: "v1.${{ github.run_number }}"
           draft: false
           prerelease: false
         env:
