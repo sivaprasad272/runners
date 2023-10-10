@@ -33,23 +33,27 @@ jobs:
       working-directory: ${{ github.workspace }}
 
   release:
+   release:
     needs: build
     runs-on: self-hosted
-
     steps:
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      with:
-        files: |
-          hello.py
-        tag_name: v1.1  # Replace with your desired tag name
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        retries: 3
-        retry-delay: 30000 # Delay in milliseconds (30 seconds)
+      - name: Get Build Number
+        id: get_build_number
+        run: echo "BUILD_NUMBER=$(echo $GITHUB_RUN_NUMBER)" >> $GITHUB_ENV
 
-    - name: Get Release URL
-      run: echo "Release URL:https://github.com/${{github.repository}}/releases/tag/${{steps.create_release.outputs.tag_name}}"
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          files: |
+            hello.py
+          tag_name: v1.${{ env.BUILD_NUMBER }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          retries: 3
+          retry-delay: 30000
+
+      - name: Get Release URL
+        run: echo "Release URL:https://github.com/${{github.repository}}/releases/tag/${{steps.create_release.outputs.tag_name}}"
