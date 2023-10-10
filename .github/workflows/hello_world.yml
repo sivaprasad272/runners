@@ -39,19 +39,15 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Set Build Number
-        id: set_build_number
-        run: echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
-
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: "v1.1.${{ env.BUILD_NUMBER }}"
+          tag_name: "v1.1.${{ github.run_number }}"
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Get Release URL
-        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/v1.1.${{ env.BUILD_NUMBER }}"
+        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/v1.1.${{ github.run_number }}"
