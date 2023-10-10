@@ -47,7 +47,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: v1.1-${{ env.BUILD_NUMBER }}
+          tag_name: "v1.1.${{ env.BUILD_NUMBER }}"
           draft: false
           prerelease: false
         env:
@@ -56,4 +56,4 @@ jobs:
           retry-delay: 30000 # Delay in milliseconds (30 seconds)
 
       - name: Get Release URL
-        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/${{ steps.create_release.outputs.tag_name }}"
+        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/v1.1.${{ env.BUILD_NUMBER }}"
