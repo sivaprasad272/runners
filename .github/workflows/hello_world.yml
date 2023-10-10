@@ -1,9 +1,14 @@
 name: Self-Hosted Build and Release
 
+
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: true
+        default: 'master'
+
 
 jobs:
   build:
