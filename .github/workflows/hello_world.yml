@@ -48,7 +48,7 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          RUN_NUMBER: ${{ github.run_number }}
+          #RUN_NUMBER: ${{ github.run_number }}
 
       - name: Get Release URL
         run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/v1.${{ github.run_number }}"
