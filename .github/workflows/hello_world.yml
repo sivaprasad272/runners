@@ -50,6 +50,9 @@ jobs:
           $semanticVersion = "v$major.$minor.$patch"
           echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
         shell: powershell
+      - name: Debug SEMVER_VERSION
+        run: echo "SEMVER_VERSION:${{ env.SEMVER_VERSION }}"
+
 
       - name: Create GitHub Release
         id: create_release
