@@ -40,23 +40,26 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Calculate Semantic Version
+      - name: Generate Semantic Version
         id: semver
-        uses: K-Phoen/semver-release-action@master
-        with:
-          release_branch: master
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          # Custom logic to generate a semantic version
+          $major = 1
+          $minor = 0
+          $patch = (Get-Date -Format "yyMMddHHmmss")
+          $semanticVersion = "v$major.$minor.$patch"
+          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
+        shell: powershell
 
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ steps.semver.outputs.version }}
+          tag_name: ${{ env.SEMVER_VERSION }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Get Release URL
-        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/${{ steps.semver.outputs.version }}"
+        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/${{ env.SEMVER_VERSION }}"
