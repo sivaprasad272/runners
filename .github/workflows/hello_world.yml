@@ -56,7 +56,7 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: K-Phoen/semver-release-action@master
+        uses: create-release@v1
         with:
           tag_name: ${{ env.SEMVER_VERSION }}  # Specify the tag name here
           draft: false
