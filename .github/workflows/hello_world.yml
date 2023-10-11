@@ -56,9 +56,9 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: actions/create-release@v1
         with:
-          tag: ${{ env.SEMVER_VERSION }}  # Specify the tag name here
+          tag_name: ${{ env.SEMVER_VERSION }}  # Specify the tag name here
           draft: false
           prerelease: false
         env:
