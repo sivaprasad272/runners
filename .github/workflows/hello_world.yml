@@ -1,18 +1,18 @@
 name: Self-Hosted Build and Release
+
 on:
   push:
     branches:
       - master
+
 jobs:
   build:
     runs-on: self-hosted
 
     steps:
-      # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Install Python 3.11.3
       - name: Install Python 3.11.3
         run: |
           # Download Python installer
@@ -21,9 +21,7 @@ jobs:
           Start-Process -Wait -FilePath python-installer.exe -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_launcher=0"
           # Check Python version
           python --version
-        shell: powershell
 
-      # Step 3: Install Python Dependencies from requirements.txt
       - name: Install Python Dependencies
         run: |
           if (Test-Path "requirements.txt") {
@@ -31,39 +29,32 @@ jobs:
           } else {
             Write-Host "requirements.txt not found. No dependencies to install."
           }
-        shell: powershell
 
-      # Step 4: Run the Hello World script
       - name: Run Hello World
         run: |
           python hello.py
         working-directory: ${{ github.workspace }}
-        shell: powershell
 
   release:
     needs: build
     runs-on: self-hosted
 
     steps:
-      # Step 5: Generate Semantic Version and Create Release
-      # Step 5: Generate Semantic Version and Create Release
-    - name: Generate Semantic Version and Create Release
-      id: semver_and_release
-      run: |
-        $major = 1
-        $minor = 0
-        $patch = (Get-Date -Format "yyMMddHHmmss")
-        $semanticVersion = "v$major.$minor.$patch"
-        echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
-        echo "Creating GitHub Release with tag $semanticVersion"
-        shell: powershell
+      - name: Generate Semantic Version and Create Release
+        id: semver_and_release
+        run: |
+          $major = 1
+          $minor = 0
+          $patch = (Get-Date -Format "yyMMddHHmmss")
+          $semanticVersion = "v$major.$minor.$patch"
+          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
+          echo "Creating GitHub Release with tag $semanticVersion"
 
-# Step 6: Create GitHub Release
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      with:
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
           tag_name: ${{ steps.semver_and_release.outputs.SEMVER_VERSION }}
           draft: false
           prerelease: false
-      env:
+        env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
