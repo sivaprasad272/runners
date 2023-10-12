@@ -26,13 +26,14 @@ jobs:
           if (Test-Path "requirements.txt") {
             pip install -r requirements.txt
           } else {
-            echo "requirements.txt not found."
+            Write-Host "requirements.txt not found."
           }
         shell: powershell
 
       - name: Run Hello World
         run: python hello.py
         working-directory: ${{ github.workspace }}
+        shell: powershell
 
   release:
     needs: build
@@ -46,11 +47,11 @@ jobs:
           $minor = 0
           $patch = (Get-Date -Format "yyMMddHHmmss")
           $semanticVersion = "v$major.$minor.$patch"
-          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
+          Write-Host "SEMVER_VERSION=$semanticVersion" >> $env:GITHUB_ENV
 
           # Create GitHub Release
-          echo "Creating GitHub Release with tag $semanticVersion"
-          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/$semanticVersion"
+          Write-Host "Creating GitHub Release with tag $semanticVersion"
+          Write-Host "Release URL: https://github.com/${env:GITHUB_REPOSITORY}/releases/tag/$semanticVersion"
         shell: powershell
 
       - name: Create GitHub Release
@@ -61,4 +62,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
