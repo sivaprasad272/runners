@@ -46,23 +46,24 @@ jobs:
 
     steps:
       # Step 5: Generate Semantic Version and Create Release
-      - name: Generate Semantic Version and Create Release
-        id: semver_and_release
-        run: |
-          $major = 1
-          $minor = 0
-          $patch = (Get-Date -Format "yyMMddHHmmss")
-          $semanticVersion = "v$major.$minor.$patch"
-          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
-          echo "Creating GitHub Release with tag $semanticVersion"
+      # Step 5: Generate Semantic Version and Create Release
+    - name: Generate Semantic Version and Create Release
+      id: semver_and_release
+      run: |
+        $major = 1
+        $minor = 0
+        $patch = (Get-Date -Format "yyMMddHHmmss")
+        $semanticVersion = "v$major.$minor.$patch"
+        echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
+        echo "Creating GitHub Release with tag $semanticVersion"
         shell: powershell
 
-      # Step 6: Create GitHub Release
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ env.SEMVER_VERSION }}          
+# Step 6: Create GitHub Release
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      with:
+          tag_name: ${{ steps.semver_and_release.outputs.SEMVER_VERSION }}
           draft: false
           prerelease: false
-        env:
+      env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
