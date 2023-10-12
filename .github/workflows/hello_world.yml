@@ -62,7 +62,7 @@ jobs:
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{env.SEMVER_VERSION}} # Provide the tag name here
+          tag_name: ${{ env.SEMVER_VERSION }}          
           draft: false
           prerelease: false
         env:
