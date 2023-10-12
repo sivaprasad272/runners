@@ -10,9 +10,11 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Step 2: Install Python 3.11.3
       - name: Install Python 3.11.3
         run: |
           # Download Python installer
@@ -23,6 +25,7 @@ jobs:
           python --version
         shell: powershell
 
+      # Step 3: Install Python Dependencies from requirements.txt
       - name: Install Python Dependencies
         run: |
           if (Test-Path "requirements.txt") {
@@ -32,6 +35,7 @@ jobs:
           }
         shell: powershell
 
+      # Step 4: Run the Hello World script
       - name: Run Hello World
         run: |
           python hello.py
@@ -43,6 +47,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # Step 5: Generate Semantic Version and Create Release
       - name: Generate Semantic Version and Create Release
         id: semver_and_release
         run: |
@@ -54,6 +59,7 @@ jobs:
           echo "Creating GitHub Release with tag $semanticVersion"
         shell: powershell
 
+      # Step 6: Create GitHub Release
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
