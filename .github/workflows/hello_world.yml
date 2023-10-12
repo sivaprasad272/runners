@@ -1,33 +1,24 @@
-name: Self-Hosted Build and Release
-
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch name'
-        required: true
-        default: 'master'
+  push:
+    branches:
+      - master
 
 jobs:
-  # Build Job
   build:
     runs-on: self-hosted
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Python 3.11.3
-        run: |
-          # Download and install Python
-          Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.11.3/python-3.11.3-amd64.exe -OutFile python-installer.exe
-          Start-Process -Wait -FilePath python-installer.exe -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_launcher=0"
-        shell: powershell
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
 
       - name: Install Python Dependencies
         run: |
-          # Install Python dependencies from requirements.txt (if it exists)
           if (Test-Path "requirements.txt") {
-            pip install -r requirements.txt
+            python -m pip install -r requirements.txt
           } else {
             Write-Host "requirements.txt not found."
           }
@@ -36,32 +27,30 @@ jobs:
       - name: Run Hello World
         run: python hello.py
         working-directory: ${{ github.workspace }}
+        shell: powershell
 
-  # Release Job
   release:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Generate Semantic Version and Create Release
-        id: semver_and_release
+      - name: Calculate Semantic Version
+        id: calculate_version
         run: |
-          # Custom logic to generate a semantic version
-          $major = 1
-          $minor = 0
-          $patch = (Get-Date -Format "yyMMddHHmmss")
-          $semanticVersion = "v$major.$minor.$patch"
-          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
-
-          # Create GitHub Release
-          Write-Host "Creating GitHub Release with tag $semanticVersion"
-          Write-Host "Release URL: https://github.com/${{ github.repository }}/releases/tag/$semanticVersion"
+          # Replace this with your logic to calculate the semantic version
+          # Example: Calculate the version based on the date
+          $calculated_version = Get-Date -Format 'yyyyMMdd'
+          echo "##vso[task.setvariable variable=version;isOutput=true]$calculated_version"
         shell: powershell
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ env.SEMVER_VERSION }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        id: create_release
+        run: |
+          $tag_name = $env:version
+          Write-Host "Creating GitHub Release with tag $tag_name"
+        shell: powershell
+
+      - name: Get Release URL
+        run: |
+          $release_url = "https://github.com/${{ github.repository }}/releases/tag/v$env:version"
+          Write-Host "Release URL: $release_url"
+        shell: powershell
