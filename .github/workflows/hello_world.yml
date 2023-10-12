@@ -13,7 +13,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
+          python-version: '3.11.3'
 
       - name: Install Python Dependencies
         run: |
@@ -39,7 +39,7 @@ jobs:
           # Replace this with your logic to calculate the semantic version
           # Example: Calculate the version based on the date
           $calculated_version = Get-Date -Format 'yyyyMMdd'
-          echo "##vso[task.setvariable variable=version;isOutput=true]$calculated_version"
+          Write-Host "##vso[task.setvariable variable=version;isOutput=true]$calculated_version"
         shell: powershell
 
       - name: Create GitHub Release
