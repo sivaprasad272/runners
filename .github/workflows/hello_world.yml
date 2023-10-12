@@ -54,8 +54,9 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: ${{ steps.semver_and_release.outputs.SEMVER_VERSION }}
+          release_name: Release ${{ steps.semver_and_release.outputs.SEMVER_VERSION }}
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
