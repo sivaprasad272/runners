@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Install Python 3.11.3
         run: |
           # Download Python installer
@@ -40,8 +41,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: Generate Semantic Version
-        id: semver
+      - name: Generate Semantic Version and Create Release
+        id: semver_and_release
         run: |
           # Custom logic to generate a semantic version
           $major = 1
@@ -49,20 +50,17 @@ jobs:
           $patch = (Get-Date -Format "yyMMddHHmmss")
           $semanticVersion = "v$major.$minor.$patch"
           echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
-        shell: powershell
-      - name: Debug SEMVER_VERSION
-        run: echo "SEMVER_VERSION:${{ env.SEMVER_VERSION }}"
 
+          # Create GitHub Release
+          echo "Creating GitHub Release with tag $semanticVersion"
+          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/$semanticVersion"
+        shell: powershell
 
       - name: Create GitHub Release
-        id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ env.SEMVER_VERSION }}  # Specify the tag name here
+          tag_name: ${{ env.SEMVER_VERSION }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
-      - name: Get Release URL
-        run: echo "Release URL:https://github.com/${{ github.repository }}/releases/tag/${{ env.SEMVER_VERSION }}"
