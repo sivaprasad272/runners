@@ -1,5 +1,4 @@
 name: Self-Hosted Build and Release
-
 on:
   push:
     branches:
