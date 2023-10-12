@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,40 +19,39 @@ jobs:
           Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.11.3/python-3.11.3-amd64.exe -OutFile python-installer.exe
           # Install Python
           Start-Process -Wait -FilePath python-installer.exe -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_launcher=0"
+          # Check Python version
+          python --version
         shell: powershell
 
       - name: Install Python Dependencies
         run: |
-          # Install Python dependencies from requirements.txt (if it exists)
           if (Test-Path "requirements.txt") {
             pip install -r requirements.txt
           } else {
-            Write-Host "requirements.txt not found."
+            Write-Host "requirements.txt not found. No dependencies to install."
           }
         shell: powershell
 
       - name: Run Hello World
-        run: python hello.py
+        run: |
+          python hello.py
         working-directory: ${{ github.workspace }}
         shell: powershell
 
   release:
     needs: build
     runs-on: self-hosted
+
     steps:
       - name: Generate Semantic Version and Create Release
         id: semver_and_release
         run: |
-          # Custom logic to generate a semantic version
           $major = 1
           $minor = 0
           $patch = (Get-Date -Format "yyMMddHHmmss")
           $semanticVersion = "v$major.$minor.$patch"
-          Write-Host "SEMVER_VERSION=$semanticVersion" >> $env:GITHUB_ENV
-
-          # Create GitHub Release
-          Write-Host "Creating GitHub Release with tag $semanticVersion"
-          Write-Host "Release URL: https://github.com/${env:GITHUB_REPOSITORY}/releases/tag/$semanticVersion"
+          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
+          echo "Creating GitHub Release with tag $semanticVersion"
         shell: powershell
 
       - name: Create GitHub Release
