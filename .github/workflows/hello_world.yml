@@ -37,18 +37,27 @@ jobs:
 
   release:
     needs: build
-    runs-on: windows-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Generate Semantic Version and Create Release
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release
         id: semver_and_release
         run: |
-          $major = 1
-          $minor = 0
-          $patch = (Get-Date -Format "yyMMddHHmmss")
-          $semanticVersion = "v$major.$minor.$patch"
-          echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
-          echo "Creating GitHub Release with tag $semanticVersion"
+          # Calculate the semantic version based on your logic
+          major=1
+          minor=0
+          patch=$(date +"%y%m%d%H%M%S")
+          semantic_version="v$major.$minor.$patch"
+
+          # Set the SEMVER_VERSION
+          echo "SEMVER_VERSION=$semantic_version" >> $GITHUB_ENV
+
+          # Create the GitHub release
+          echo "Creating GitHub Release with tag $semantic_version"
+        shell: bash
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
@@ -59,5 +68,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
