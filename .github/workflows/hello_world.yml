@@ -9,17 +9,17 @@ on:
         default: 'master'
 
 jobs:
+  # Build Job
   build:
     runs-on: self-hosted
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
 
       - name: Install Python 3.11.3
         run: |
-          # Download Python installer
+          # Download and install Python
           Invoke-WebRequest -Uri https://www.python.org/ftp/python/3.11.3/python-3.11.3-amd64.exe -OutFile python-installer.exe
-          # Install Python
           Start-Process -Wait -FilePath python-installer.exe -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_launcher=0"
         shell: powershell
 
@@ -29,7 +29,7 @@ jobs:
           if (Test-Path "requirements.txt") {
             pip install -r requirements.txt
           } else {
-            echo "requirements.txt not found."
+            Write-Host "requirements.txt not found."
           }
         shell: powershell
 
@@ -37,6 +37,7 @@ jobs:
         run: python hello.py
         working-directory: ${{ github.workspace }}
 
+  # Release Job
   release:
     needs: build
     runs-on: self-hosted
@@ -52,8 +53,8 @@ jobs:
           echo "SEMVER_VERSION=$semanticVersion" >> $GITHUB_ENV
 
           # Create GitHub Release
-          echo "Creating GitHub Release with tag $semanticVersion"
-          echo "Release URL: https://github.com/${{ github.repository }}/releases/tag/$semanticVersion"
+          Write-Host "Creating GitHub Release with tag $semanticVersion"
+          Write-Host "Release URL: https://github.com/${{ github.repository }}/releases/tag/$semanticVersion"
         shell: powershell
 
       - name: Create GitHub Release
